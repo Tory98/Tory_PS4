@@ -9,7 +9,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-**Name:**
+**Name: Tory**
 
 Instructions: 
 
@@ -34,14 +34,39 @@ This exercise uses data from Bryan,Chowdhury, and Mobarak's paper, "Underinvestm
 
 The data can be found by going to Mushfiq Mobarak's Yale faculty page, select "data", and then following the link to the data repository page on the Harvard dataverse. You will need to sign in to get access to the data files. Once logged in, you will find many possible files to download. Navigate to the second page of listed files and download `Mobarak - Monga Dataverse files.zip` which contains all the files we need. 
 
+```{r}
+install.packages("haven")
+```
+```{r}
+install.packages("dplyr")
+```
+
 
 ## Question: Loading the data - Load any packages you will need and the data contained in the following files `Round1_Controls_Table1.dta` and `Round2.dta`. How many observations are contained in each of these datasets. What is the level of an observation? Explain any discrepancies between the datasets.**
 
+
 **Code:**
 
+```{r}
+library(haven)
+Round1_Controls_Table1 <- read_dta("Round1_Controls_Table1.dta")
+#View(Round1_Controls_Table1)
+
+Round2<-read_dta("Round2.dta")
+#View(Round2)
+```
+
+```{r}
+obs_R1<-nrow(Round1_Controls_Table1)
+obs_R2<-nrow(Round2)
+
+paste("There are ", obs_R1, " observations in the first dataset.")
+paste("There are ", obs_R2, " observations in the second dataset.")
+```
 
 
-**Answer:**
+
+**Answer: The observations are taken at the household level. A discrepancy in the data is that round 1 has seven fewer observations than round 2.**
 
  
 ## Question: Data Description- The dataset contains many variables, some of which are not used in this exercise. Keep the following variables in the final datasets (Hint: use the `select` function in `dplyr`).** 
@@ -60,6 +85,15 @@ For Round 1 data:
 |tsaving_hh_r1    |Total household savings                                                  |
 |hhh_education    |Household head is educated                                              |
 |num_adltmalesr1  |Number of adult males in the household                                  |
+
+**Code:**
+```{r}
+library(dplyr)
+R1<-Round1_Controls_Table1%>%select("cash", "credit", "info", "control", "q9pdcalq9", "exp_total_pc_r1", "hhmembers_r1", "tsaving_hh_r1", "hhh_education", "num_adltmalesr1")
+#View(R1)
+```
+
+
 
 For Round 2 data:
 
@@ -89,10 +123,15 @@ For Round 2 data:
 |migrant_new    |Household has a first time migrant this season                          |
 
 
-
 **A description of each variable should appear in the column headers of the loaded data. **
 
 **Code:**
+
+```{r}
+R2<-Round2%>%select("cash", "credit","info", "control", "average_exp2", "lit", "walls_good", "monga", "dhaka_remit", "dhaka_network", "exp_total_pc_r1", "subsistencer1", "num_adltmalesr1", "num_childrenr1", "avgQ13earned", "constrainedr1", "constrainedr1", "bankedr1", "upazila", "village", "migrant", "total_fish", "migrant_new")
+#View(R2)
+```
+
 
 # Analysis:
 
@@ -100,33 +139,127 @@ For Round 2 data:
 
 **Code:**
 
+```{r}
+install.packages("data.table")
+library(data.table)
+```
 
-**Answer:** 
+
+```{r}
+options(scipen=1)
+strCols = names(R1)
+
+allModelsResults_cash <- list() # Create empty list 
+allModelsResults_credit <- list() # Create empty list 
+allModelsResults_info <- list() # Create empty list 
+
+
+formula_cash <- list() # Create empty list
+formula_credit <- list() # Create empty list
+formula_info <- list() # Create empty list
+
+model_cash <- list() # Create empty list
+model_credit <- list() # Create empty list
+model_info <- list() # Create empty list
+
+pvals_cash <- c() # Create empty list
+pvals_credit <- c() # Create empty list
+pvals_info <- c() # Create empty list
+
+betas_cash <- c() # Create empty list 
+betas_credit <- c() # Create empty list 
+betas_info <- c() # Create empty list 
+
+ses_cash <- c() # Create empty list
+ses_credit <- c() # Create empty list
+ses_info <- c() # Create empty list
+
+
+
+for (i in 5:10) {
+
+cash<-unlist(R1[,"cash"])
+credit<-unlist(R1[,"credit"])
+info<-unlist(R1[,"info"])
+
+model_cash[[i]] = lm(unlist(R1[,i])~cash)
+model_credit[[i]] = lm(unlist(R1[,i])~credit)
+model_info[[i]] = lm(unlist(R1[,i])~info)
+
+allModelsResults_cash[[i]] <- summary(model_cash[[i]])
+pvals_cash[i] <- summary(model_cash[[i]])$coefficients["cash","Pr(>|t|)"] 
+betas_cash[i] <- summary(model_cash[[i]])$coefficients["cash", "Estimate"] 
+ses_cash[i] <- summary(model_cash[[i]])$coefficients["cash", "Std. Error"]
+
+allModelsResults_credit[[i]] <- summary(model_credit[[i]])
+pvals_credit[i] <- summary(model_credit[[i]])$coefficients["credit", "Pr(>|t|)"] 
+betas_credit[i] <- summary(model_credit[[i]])$coefficients["credit", "Estimate"] 
+ses_credit[i] <- summary(model_credit[[i]])$coefficients["credit", "Std. Error"]
+
+allModelsResults_info[[i]] <- summary(model_credit[[i]])
+pvals_info[i] <- summary(model_info[[i]])$coefficients["info", "Pr(>|t|)"] 
+betas_info[i] <- summary(model_info[[i]])$coefficients["info", "Estimate"] 
+ses_info[i] <- summary(model_info[[i]])$coefficients["info", "Std. Error"]
+
+}
+
+my_balance <- data.frame(strCols, betas_cash, ses_cash, pvals_cash, betas_credit, ses_credit, pvals_credit,betas_info, ses_info, pvals_info) 
+#my_balance <- my_balance[-c(1, 2, 3, 4), ]
+#View(my_balance)
+
+my_balance1 <- my_balance[-c(1, 2, 3, 4), ]
+my_balance <- my_balance[-c(1, 2, 3, 4), ]
+
+setDT(my_balance1)
+
+print(my_balance1)
+```
+
+
+**Answer: This table is a balance table. The equivalent table in the paper is Table 1: RANDOMIZATION BALANCE ON OBSERVABLES AT BASELINE** 
 
 
 ## **Question: How should the coefficients in the table above be interpreted? What should we look for in this table?**
 
-**Answer:**
+**Answer: The coefficients in the table should be interpreted as the relationship between cash, credit, and info and the given household characteristic. In this table, we want to look for similar coefficients between the cash, credit, and info regressions for each household characteristic. If many of them aren't similar then we have to worry about whether the assignment of individuals to the cash, credit, and info groups was truly random.**
 
 
 ## **Question: Using the round 2 data, regress migrant on the treatment arm indicators. What is the equivalent table in the paper?**
 
 **Code:**
+```{r}
+install.packages("stargazer")
+library(stargazer)
+```
 
-**Answer:** 
+
+```{r, results='asis'}
+#model_control<-lm(migrant~control, R2)
+model_cash<-lm(migrant~cash+credit+info, R2)
+#model_credit<-lm(migrant~credit, R2)
+#model_info<-lm(migrant~info, R2)
+
+stargazer(list(model_cash), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(model_cash$rse))
+```
+
+
+**Answer: The equivalent table in this paper is Table A.I, First-Stage: Migration as a Function of Treatments in 2008** 
 
 
 ## **Question: How should the coefficients in the table above be interpreted? Why is this table important?**
 
-**Answer:**
+**Answer: The coefficients in the table above should be interpreted as the correlation between the treatment group and migration. This table is important because it proves that there is a correlation between treatment group and migration (first stage), which is necessary in order to run the IV and recover the true treatment effect.**
 
 
 ## **Question: What is the underlying migration rate in the control group and how might this change our interpretation of the results? **
 
-**Answer:**
+
+**Answer: The underlying migration rate in the control group is 0.360**
 
 
 ## **Question: Replicate the results presented in the third row of the first three columns of table 3. Present them in a table and interpret these results. **
+
+
 
 Note 1: The authors elect to drop one household observation because the reported value of total fish consumed in the household is very high. 
 
@@ -138,19 +271,38 @@ where you can replace fevariables and ivfirststage with 0 if you are not using f
 
 
 **Code:**
+```{r}
+install.packages("lfe")
+library(lfe)
+```
 
 
 
+```{r, results='asis'}
+dataset2<-R2%>%filter(total_fish<16000)
 
-**Answer:**
+model_consumption<-felm(average_exp2~cash+credit+info|upazila|0|village, dataset2)
+
+stargazer(list(model_consumption), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(model_consumption$rse))
+```
+
+
+
+**Answer: These results mean that, accounting for the correlation of households in the same village, being in the cash group is associated with an average consumption of 96.566 , being in the credit group is associated with a 76.743 average consumption, and being in the information group is associated with a -38.521 average consumption. **
 
 
 ## **Question: What happens to these estimates if you drop the fixed effects from the specification. Why? **
 
 **Code:**
 
+```{r, results='asis'}
+model_consumption_noFE<-felm(average_exp2~cash+credit+info|0|0|village, dataset2)
 
-**Answer:**
+stargazer(list(model_consumption_noFE), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(model_consumption_noFE$rse))
+```
+
+
+**Answer: If you drop the fixed effects all of the coefficients decrease. This means that the sub-region creates a downward bias on the true $beta_1$ when it is omitted.**
 
 
 
@@ -161,14 +313,26 @@ Hint: You will need to construct a new variable to run these estimates.
 
 **Code:**
 
+```{r}
+dataset2$ITT<-dataset2$cash+dataset2$credit
+column4<-felm(average_exp2~ITT|upazila|0|village, dataset2)
 
+stargazer(list(column4), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column4$rse))
+```
 
-**Answer:**
+```{r}
+dataset2$ITT<-dataset2$cash+dataset2$credit
+column4<-felm(average_exp2~ITT+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila|0|village, dataset2)
+
+stargazer(list(column4), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column4$rse))
+```
+
+**Answer: The coefficient decreases by around 10% and the standard error doesn't really change. This isn't really surprising because we added so many controls that it is likely that some of them are correlated with just y, some are correlated with just x, and some are correlated with both or neither which means that we can't form any expectations about what the cpefficient and standard errors will be before running the regression.**
 
 
 ## **Question: Why is the header of the first five columns of table 3 "ITT". What is meant by this and what does this tell us about how we should interpret these results?**
 
-**Answer:**
+**Answer: The header of the first five columns of table 3 is ITT because the coefficients were created by running direct regressions of consumption on the treatment (credit or cash). This means the regressions are only capturing the effect of the Intention To Treat, hence why they're labeled ITT. We should interpret these results as the effect of putting an individual in the treatment category on their consumption.**
 
 
 ## **Question: We are interested in estimating how migration affects total expenditures for the households that were induced to migrate by the cash and credit treatments as follows,**
@@ -178,12 +342,12 @@ TotExp_{ivj}=\alpha+\beta_1Migrate_{ivj}+\theta X_{ivj}+\varphi_j+\nu_{ivj}
 $$
 **where $Migrate_{ivj}$ is dummy indicator for if a member of household i in village v in subdistrict j migrated, $X_{ivj}$ is a vector of control variables and $\varphi_j$ are the subdistrict fixed effects. However it is not possible to identify in the data which households were induced by the treatment vs those who would have migrated  either way. Furthermore, there is likely substantial selection between the households that select into migration versus those that do not. Propose a source of exogenous variation that can be used as an instrument to isolate "good" exogenous variation in migration. **
 
-**Answer:**
+**Answer: A source of exogenous variation that can be used as an instrument to isolate the "good" exogenous variation in migration is whether or not the individual who migrated was induced to migrate by treatment. **
  
 
 ## **Question: What is the first stage specification?**
 
-**Answer:**
+**Answer: First stage is migration regressed on treatment.**
 
 
 ## **Question: Estimate the first stage and check that you have a strong instrument for migration.**
@@ -191,9 +355,18 @@ $$
  Note: The first stage results reported in the paper appendix may differ slightly as explained in the table footnote.  
 
 **Code:**
+```{r}
+dataset2<-dataset2%>%filter(!is.na(ITT))
+first_stage1<-felm(migrant~cash+credit+info|upazila, dataset2)
+first_stage2<-felm(migrant~cash+credit+info+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila, dataset2)
+first_stage_ITT<-felm(migrant~ITT|upazila, dataset2)
+
+stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(first_stage$rse,first_stage2$rse,first_stage_ITT$rse))
+
+```
 
 
-**Answer:**
+**Answer: The coefficient on the treatment is significant at the 99% level, so we do have a strong first stage.**
 
 
 ## **Question: Use your instrument to estimate the LATE (Local Average Treatment Effect), the impact of migration on total consumption for those induced to migrate by the treatment, as in columns 6 and 7 of table 3 in the paper. Interpret your results. **
@@ -201,30 +374,38 @@ $$
 Note: if you wish to replicate the paper's coefficients exactly, you will need to use multiple instruments, one for each treatment arm.
 
 **Code:**
+```{r}
+column6<-felm(average_exp2~1|upazila|(migrant~ITT), dataset2)
+column7<-felm(average_exp2~num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila|(migrant~ITT), dataset2)
 
 
-**Answer:**
+stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column6$rse,column7$rse))
+
+```
+
+
+**Answer: The coefficient of column 6 can be interpreted to mean that migrating causes consumption to increase by 374.857. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics migrating causes and increase in consumption of 333.378. **
 
 
 
 ## **Question: Why are these results different from those in columns 4 and 5 of the paper?  **
 
-**Answer:** 
+**Answer: These results are different because they can be interpreted to be causal. They are also much larger than the estimates in columns 4 and 5, implying that there were some omitted variables creating downward bias on the Intention to Treat coefficient.** 
 
 
 ## **Question: Why is this value particularly relevant for policy decisions in the context of this experiment.**
 
-**Answer:**
+**Answer: This value is particularly relevant for policy decisions in the context of this experiment because it means that if you could induce migration for individuals living in rural villages you could then increase their household consumption by over 300. This means that inducing migration would be economically beneficial and therefore soemthing policy makers would want to consider.**
 
 
 ## **Question: Suppose a policy maker found these results so compelling that they decided to make this a national policy. How would general equilibrium effects potentially change the impacts of this policy if it was implemented in a very large scale way?**
 
-**Answer:**
+**Answer: If this was a national policy, many more people would be migrating to cities. This means that there would be a much higher supply of labor for the same demand of labor, which means that wages would fall. This general equilibrium effect of decreasing wages in cities would decrease the earnings made by migrants and therefore result in a decrease in the coefficient of migration on consumption.**
 
 
 ## **Question: One major concern that is often brought up in discussions about RCT's is the problem of external validity. It is not always clear how informative the findings from a small scale research project in one context are for policy makers working on a different scale and in different contexts. What are your thoughts on the external validity of this particular project and RCT's in general? **
 
-**Answer:**
+**Answer: I think this particular project definitely has an external validity problem, because there are a lot of ways that general equilibrium effects would change the outcome of this experiment if it were performed on a larger scale. Given the extra article that **
 
 
 # Submission instructions:
