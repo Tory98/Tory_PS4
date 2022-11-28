@@ -1,6 +1,6 @@
 ---
 title: 'Problem Set 4: Randomized Control Trials'
-author: "Claire Duquennois"
+author: "Tory"
 output:
  html_document:
     number_sections: true
