@@ -384,7 +384,7 @@ stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm 
 ```
 
 
-**Answer: The coefficient of column 6 can be interpreted to mean that migrating causes consumption to increase by 374.857. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics migrating causes and increase in consumption of 333.378. **
+**Answer: The coefficient of column 6 can be interpreted to mean that migrating causes consumption to increase by 374.857. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics migrating causes and increase in consumption of 333.378**
 
 
 
@@ -395,7 +395,7 @@ stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm 
 
 ## **Question: Why is this value particularly relevant for policy decisions in the context of this experiment.**
 
-**Answer: This value is particularly relevant for policy decisions in the context of this experiment because it means that if you could induce migration for individuals living in rural villages you could then increase their household consumption by over 300. This means that inducing migration would be economically beneficial and therefore soemthing policy makers would want to consider.**
+**Answer: This value is particularly relevant for policy decisions in the context of this experiment because it means that if you could induce migration for individuals living in rural villages you could then increase their household consumption by over 300. This means that inducing migration would be economically beneficial and therefore something policy makers would want to consider.**
 
 
 ## **Question: Suppose a policy maker found these results so compelling that they decided to make this a national policy. How would general equilibrium effects potentially change the impacts of this policy if it was implemented in a very large scale way?**
@@ -405,8 +405,8 @@ stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm 
 
 ## **Question: One major concern that is often brought up in discussions about RCT's is the problem of external validity. It is not always clear how informative the findings from a small scale research project in one context are for policy makers working on a different scale and in different contexts. What are your thoughts on the external validity of this particular project and RCT's in general? **
 
-**Answer: I think this particular project definitely has an external validity problem, because there are a lot of ways that general equilibrium effects would change the outcome of this experiment if it were performed on a larger scale. Given the extra article that **
-
+**Answer: I think this particular project definitely has an external validity problem, because there are a lot of ways that general equilibrium effects would change the outcome of this experiment if it were performed on a larger scale. Given the extra article that specifically talked about the fact that this experiment's conclusions failed on a larger scale it is clear that there is an external validity problem here. **
+**I think RCT's in general will only have an external validity problem if a large amount of participants will affect the conditions of the experiment. This usually won't be a problem for medical RCT's so long as the treatment isn't geared towards a contagious disease. **
 
 # Submission instructions:
 
