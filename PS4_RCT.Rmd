@@ -3,6 +3,8 @@ title: 'Problem Set 4: Randomized Control Trials'
 author: "Tory"
 output:
  html_document:
+df_print: paged
+
     number_sections: true
 ---
 
@@ -209,10 +211,18 @@ my_balance <- data.frame(strCols, betas_cash, ses_cash, pvals_cash, betas_credit
 
 my_balance1 <- my_balance[-c(1, 2, 3, 4), ]
 my_balance <- my_balance[-c(1, 2, 3, 4), ]
+my_balance1[1,1]<-"Calories/Person/Day"
+my_balance1[2,1]<-"Monthly Expenditure/Capita"
+my_balance1[3,1]<-"Household Members"
+my_balance1[4,1]<-"Total Savings"
+my_balance1[5,1]<-"Household Head Education"
+my_balance1[6,1]<-"Number of Adult Males"
 
-setDT(my_balance1)
 
-print(my_balance1)
+
+colnames(my_balance1)<-c("Variable", "Beta_cash", "Standard Error_cash", "p value_cash", "Beta_credit", "Standard_Error_credit", "p value_credit", "Beta_info", "Standard_Error_info", "p value_info")
+
+my_balance1
 ```
 
 
@@ -254,7 +264,7 @@ stargazer(list(model_cash), title="Regression of Migrant on Treatment Arm Indica
 ## **Question: What is the underlying migration rate in the control group and how might this change our interpretation of the results? **
 
 
-**Answer: The underlying migration rate in the control group is 0.360**
+**Answer: The underlying migration rate in the control group is 0.360. This is important for our interpretation because it helps us better understand how much the cash and credit options increased migration. Since cash and credit increased migration by about 0.2 and the original migration was .360, we can say that the cash and credit options increased migration by about 65%.**
 
 
 ## **Question: Replicate the results presented in the third row of the first three columns of table 3. Present them in a table and interpret these results. **
@@ -347,7 +357,7 @@ $$
 
 ## **Question: What is the first stage specification?**
 
-**Answer: First stage is migration regressed on treatment.**
+**Answer: First stage is migration_new regressed on treatment.**
 
 
 ## **Question: Estimate the first stage and check that you have a strong instrument for migration.**
