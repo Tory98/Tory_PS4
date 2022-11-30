@@ -293,7 +293,7 @@ dataset2<-R2%>%filter(total_fish<16000)
 
 model_consumption<-felm(average_exp2~cash+credit+info|upazila|0|village, dataset2)
 
-stargazer(list(model_consumption), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(model_consumption$rse))
+stargazer(list(model_consumption), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(model_consumption$rse))
 ```
 
 
@@ -308,7 +308,7 @@ stargazer(list(model_consumption), title="Regression of Migrant on Treatment Arm
 ```{r, results='asis'}
 model_consumption_noFE<-felm(average_exp2~cash+credit+info|0|0|village, dataset2)
 
-stargazer(list(model_consumption_noFE), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(model_consumption_noFE$rse))
+stargazer(list(model_consumption_noFE), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(model_consumption_noFE$rse))
 ```
 
 
@@ -323,18 +323,18 @@ Hint: You will need to construct a new variable to run these estimates.
 
 **Code:**
 
-```{r}
+```{r, results='asis'}
 dataset2$ITT<-dataset2$cash+dataset2$credit
 column4<-felm(average_exp2~ITT|upazila|0|village, dataset2)
 
-stargazer(list(column4), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column4$rse))
+stargazer(list(column4), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(column4$rse))
 ```
 
-```{r}
+```{r, results='asis'}
 dataset2$ITT<-dataset2$cash+dataset2$credit
 column4<-felm(average_exp2~ITT+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila|0|village, dataset2)
 
-stargazer(list(column4), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column4$rse))
+stargazer(list(column4), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(column4$rse))
 ```
 
 **Answer: The coefficient decreases by around 10% and the standard error doesn't really change. This isn't really surprising because we added so many controls that it is likely that some of them are correlated with just y, some are correlated with just x, and some are correlated with both or neither which means that we can't form any expectations about what the cpefficient and standard errors will be before running the regression.**
@@ -365,13 +365,13 @@ $$
  Note: The first stage results reported in the paper appendix may differ slightly as explained in the table footnote.  
 
 **Code:**
-```{r}
+```{r, results='asis'}
 dataset2<-dataset2%>%filter(!is.na(ITT))
 first_stage1<-felm(migrant_new~cash+credit+info|upazila, dataset2)
 first_stage2<-felm(migrant_new~cash+credit+info+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila, dataset2)
 first_stage_ITT<-felm(migrant_new~ITT|upazila, dataset2)
 
-stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(first_stage$rse,first_stage2$rse,first_stage_ITT$rse))
+stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(first_stage$rse,first_stage2$rse,first_stage_ITT$rse))
 
 ```
 
@@ -384,12 +384,12 @@ stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of
 Note: if you wish to replicate the paper's coefficients exactly, you will need to use multiple instruments, one for each treatment arm.
 
 **Code:**
-```{r}
+```{r, results='asis'}
 column6<-felm(average_exp2~1|upazila|(migrant_new~cash+credit+info)|village, dataset2)
 column7<-felm(average_exp2~num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila|(migrant_new~cash+credit+info)|village, dataset2)
 
 
-stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column6$rse,column7$rse))
+stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(column6$rse,column7$rse))
 
 ```
 
