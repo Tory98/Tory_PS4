@@ -357,9 +357,9 @@ $$
 **Code:**
 ```{r}
 dataset2<-dataset2%>%filter(!is.na(ITT))
-first_stage1<-felm(migrant~cash+credit+info|upazila, dataset2)
-first_stage2<-felm(migrant~cash+credit+info+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila, dataset2)
-first_stage_ITT<-felm(migrant~ITT|upazila, dataset2)
+first_stage1<-felm(migrant_new~cash+credit+info|upazila, dataset2)
+first_stage2<-felm(migrant_new~cash+credit+info+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila, dataset2)
+first_stage_ITT<-felm(migrant_new~ITT|upazila, dataset2)
 
 stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(first_stage$rse,first_stage2$rse,first_stage_ITT$rse))
 
@@ -375,8 +375,8 @@ Note: if you wish to replicate the paper's coefficients exactly, you will need t
 
 **Code:**
 ```{r}
-column6<-felm(average_exp2~1|upazila|(migrant~ITT), dataset2)
-column7<-felm(average_exp2~num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila|(migrant~ITT), dataset2)
+column6<-felm(average_exp2~1|upazila|(migrant_new~cash+credit+info)|village, dataset2)
+column7<-felm(average_exp2~num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila|(migrant_new~cash+credit+info)|village, dataset2)
 
 
 stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm Indicators", type="text", se = list(column6$rse,column7$rse))
@@ -384,7 +384,7 @@ stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm 
 ```
 
 
-**Answer: The coefficient of column 6 can be interpreted to mean that migrating causes consumption to increase by 374.857. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics migrating causes and increase in consumption of 333.378**
+**Answer: The coefficient of column 6 can be interpreted to mean that migrating causes consumption to increase by 391.193. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics migrating causes and increase in consumption of 355.115**
 
 
 
