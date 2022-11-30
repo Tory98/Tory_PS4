@@ -3,8 +3,7 @@ title: 'Problem Set 4: Randomized Control Trials'
 author: "Tory"
 output:
  html_document:
-df_print: paged
-
+    df_print: paged
     number_sections: true
 ---
 
@@ -68,7 +67,7 @@ paste("There are ", obs_R2, " observations in the second dataset.")
 
 
 
-**Answer: The observations are taken at the household level. A discrepancy in the data is that round 1 has seven fewer observations than round 2.**
+**Answer: The observations are taken at the household level. A discrepancy in the data is that round 1 has seven fewer observations than round 2. This is because round 2 has seven rows that have decimal household id numbers, i.e. 143.1 and 143.2. **
 
  
 ## Question: Data Description- The dataset contains many variables, some of which are not used in this exercise. Keep the following variables in the final datasets (Hint: use the `select` function in `dplyr`).** 
@@ -211,17 +210,10 @@ my_balance <- data.frame(strCols, betas_cash, ses_cash, pvals_cash, betas_credit
 
 my_balance1 <- my_balance[-c(1, 2, 3, 4), ]
 my_balance <- my_balance[-c(1, 2, 3, 4), ]
-my_balance1[1,1]<-"Calories/Person/Day"
-my_balance1[2,1]<-"Monthly Expenditure/Capita"
-my_balance1[3,1]<-"Household Members"
-my_balance1[4,1]<-"Total Savings"
-my_balance1[5,1]<-"Household Head Education"
-my_balance1[6,1]<-"Number of Adult Males"
-
 
 
 colnames(my_balance1)<-c("Variable", "Beta_cash", "Standard Error_cash", "p value_cash", "Beta_credit", "Standard_Error_credit", "p value_credit", "Beta_info", "Standard_Error_info", "p value_info")
-
+rownames(my_balance1)<-c("Calories/Person/Day", "Monthly Expenditure/Capita", "Household Members","Total Savings", "Household Head Education", "Number of Adult Males" )
 my_balance1
 ```
 
@@ -371,7 +363,7 @@ first_stage1<-felm(migrant_new~cash+credit+info|upazila, dataset2)
 first_stage2<-felm(migrant_new~cash+credit+info+num_adltmalesr1+walls_good+subsistencer1+num_childrenr1+bankedr1+constrainedr1+exp_total_pc_r1+dhaka_network+dhaka_remit+monga+lit+avgQ13earned|upazila, dataset2)
 first_stage_ITT<-felm(migrant_new~ITT|upazila, dataset2)
 
-stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(first_stage$rse,first_stage2$rse,first_stage_ITT$rse))
+stargazer(list(first_stage1, first_stage2,first_stage_ITT), title="Regression of Migrant on Treatment Arm Indicators", type="html", se = list(first_stage1$rse,first_stage2$rse,first_stage_ITT$rse))
 
 ```
 
@@ -394,7 +386,7 @@ stargazer(list(column6, column7), title="Regression of Migrant on Treatment Arm 
 ```
 
 
-**Answer: The coefficient of column 6 can be interpreted to mean that migrating causes consumption to increase by 391.193. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics migrating causes and increase in consumption of 355.115**
+**Answer: The coefficient of column 6 can be interpreted to mean that adding a household migrant causes consumption to increase by 391.193. The coefficient of column 7 can be interpreted to mean that after controlling for various household characteristics adding a household migrant causes and increase in consumption of 355.115**
 
 
 
